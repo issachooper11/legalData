@@ -161,3 +161,22 @@ def checkValue(data):
         return False
     else:
         return True
+
+
+# 处理数组内容中含'等 、 二审等字样的内容只截取到原告信息进行判断
+# 去重复项目 去空项目 去个人项目
+def getPlaintiff(arr):
+    new_arr = arr
+    separators = ['与', '等', '二审', '、', ';', '*', '·']
+    for i in arr:
+        for sep in separators:
+            i[0] = i[0].split(sep)[0]
+    unique_dict = {}
+    for array in new_arr:
+        key = array[0]
+        if key != '':
+            if len(key) > 4:
+                if checkValue(key):
+                    if key not in unique_dict:
+                        unique_dict[key] = array
+    return list(unique_dict.values())

@@ -71,7 +71,7 @@ def delay(num):
 
 # 打印信息
 def showInfo(data):
-    print('*' * 11 + data + '*' * 11)
+    print('.' * 11 + data + '.' * 11)
 
 
 # 人工判断是哪个平台运行的程序,type:1-excel_url 2-driver_url 3-originalUrl
@@ -128,6 +128,37 @@ def filterHtmlData(l):
         showInfo('转换完成')
 
 
+# 直接将数据转化为excel输出到桌面
+def transToExcel(l):
+    if len(l) > 0:
+        save_url = chooseUrl(1)
+        wb = load_workbook(save_url)
+        news = wb.create_sheet()
+        news.append(['公司名称', '案号', '法院', '日期'])
+        for i in l:
+            news.append(i)
+        wb.save(save_url)
+        showInfo('转换完成')
+
+
+def changeData(l):
+    filter_list = []
+    if len(l) > 0:
+        for i in l:
+            lists = []
+            a = i.split('\n')
+            # 取数组的第一个 是网页数据内容
+            if len(a) > 1:
+                b = a[1]
+                c = filterCourtName(a[2])
+                if True:
+                    lists.append(b)
+                    for x in c:
+                        lists.append(x)
+                    filter_list.append(lists)
+        return filter_list
+
+
 # 手动点击通用方法
 def handleByClick():
     a = input('是否继续')
@@ -136,7 +167,13 @@ def handleByClick():
 
 
 def handleByInfo(data):
-    a = input('+++++++++++等待页面加载+++++++++++，如继续请按回车')
+    a = input('...........等待页面加载...........')
     if a == '':
-        print(data)
+        print('.' * 11 + data + '.' * 11)
+        pass
+
+
+def manual_confirm(data):
+    a = input(data)
+    if a == '':
         pass

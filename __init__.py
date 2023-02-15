@@ -21,23 +21,25 @@ if __name__ == '__main__':
         # getFreshData()
         getNewWkData()
     else:
+        # 实例化edge开始按照步骤登录
         ser = Service(chooseUrl(2))
         op = webdriver.EdgeOptions()
         dr = webdriver.Edge(service=ser, options=op)
-        # 实例化edge开始按照步骤登录
         lg = EdgeControl(dr)
         lg.login()
+        # lg.login_test()
         if task_code == '1':
-            seconds = 35
-            pageNum = 10
-            try:
-                lg.login_and_collectAllNewData(seconds, pageNum)
-            except:
-                traceback.print_exc()
-                showInfo('出错啦!!!')
-                lg.closePage()
-            finally:
-                showInfo('完事啦！！')
+            lg.collect_data()
+            # seconds = 35
+            # pageNum = 10
+            # try:
+            #     lg.login_and_collectAllNewData(seconds, pageNum)
+            # except:
+            #     traceback.print_exc()
+            #     showInfo('出错啦!!!')
+            #     lg.closePage()
+            # finally:
+            #     showInfo('完事啦！！')
         elif task_code == '2':
             try:
                 lg.open_and_checkData()

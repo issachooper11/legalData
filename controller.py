@@ -2,16 +2,25 @@
 # 开发时间: 2022/3/24 12:27
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
 from base import BaseControl
-from method import getUnEditCodes, getCodeAndNames
-from util import showInfo, docs, docsItem, delay, provinces, filterHtmlData, aiqicha_url, wk_url, handleByClick, \
-    handleByInfo
+from method import getUnEditCodes, getPlaintiff
+from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData, \
+    transToExcel
 
 
 class EdgeControl(BaseControl):
     def __init__(self, driver):
         super().__init__(driver)
+
+    def login_test(self):
+        showInfo('开始登录')
+        self.setWinPosition(0, 0)
+        self.setWinSize(1024, 1024)
+        self.driver.get('https://www.bjcourt.gov.cn/')
+        delay(15)
+        self.driver.find_element(By.LINK_TEXT, '公告公示').click()
+        delay(20)
+        self.driver.quit()
 
     # 登陆程序简化出来可以复用
     def login(self):
@@ -56,7 +65,7 @@ class EdgeControl(BaseControl):
         ActionChains(self.driver).move_to_element(self.controlByXpath(docs['案例'])).perform()
         # 点击裁判文书
         self.waitLoading(docs['裁判文书']).click()
-        handleByInfo('加载完毕再往下走')
+        handleByInfo('按回车继续')
 
     # 登录指定网站并抓取新数据
     def login_and_collectAllNewData(self, sec, pageNum):
@@ -105,7 +114,6 @@ class EdgeControl(BaseControl):
             # self.driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
         filterHtmlData(finalArr)
         showInfo('打印最终抓取的数据')
-        print(finalData)
         showInfo('任务完成，全部退出')
         self.driver.quit()
 
@@ -152,5 +160,62 @@ class EdgeControl(BaseControl):
             self.controlByXpath(docs['删除']).click()
             delay(2)
 
-
-
+    # 执行逻辑：
+    # 登陆指定网站
+    # 手动点击条件节约时间
+    # 每页获取100条数据后循环判断抓取信息，
+    # 如果符合公司名称则点击链接转入详情页查询是否为合格数据，并手动复制判决内容输入到方法中保存
+    # 否则倒计时3s自动跳过进入下一条信息的判断，不预设翻页参数，添加方法手动跳出
+    def collect_data(self):
+        self.waitLoading(docs['输入框']).send_keys('二审')
+        delay(2)
+        self.waitLoading(docs['搜索']).click()
+        finalArr = []
+        total_num = 0
+        manual_confirm('手动点击条件，完成后按回车继续工作')
+        while True:
+            data_input = input('程序是否继续运行:')
+            if data_input == '':
+                list_text = []
+                for li in self.controlByXpath(docs['列表']).find_elements(By.TAG_NAME, 'li'):
+                    list_text.append(li.text)
+                showInfo('未处理的数据展示如下')
+                new_list_text = getPlaintiff(changeData(list_text))
+                # print(changeData(list_text))
+                # new_filter_list_text = changeData(list_text)
+                # filter_list_text = []
+                # if len(new_list_text) > 0:
+                #     for i in new_list_text:
+                #         check_data = input(i[0] + '---是否符合要求:')
+                #         if check_data == '':
+                #             showInfo('打开进入详情页')
+                #             self.driver.find_element(By.PARTIAL_LINK_TEXT, i[0]).click()
+                #             self.driver.switch_to.window(self.driver.window_handles[-1])
+                #             detail_data = input('案件是否符合要求：')
+                #             if detail_data == '':
+                #                 filter_list_text.extend(i)
+                #                 showInfo('已添加')
+                #                 self.driver.close()
+                #             else:
+                #                 showInfo('不符合')
+                #                 self.driver.close()
+                #         else:
+                #             showInfo('过滤')
+                #         if len(self.driver.window_handles) > 2:
+                #             self.driver.switch_to.window(self.driver.window_handles[2])
+                #         else:
+                #             self.driver.switch_to.window(self.driver.window_handles[1])
+                showInfo('本页收集' + str(len(new_list_text)) + '条有效数据')
+                finalArr.extend(new_list_text)
+                total_num = total_num + len(new_list_text)
+                self.controlByText('下一页').click()
+                showInfo('等待页面加载完')
+                delay(10)
+            elif data_input == '2023':
+                manual_confirm('手动切换地区，按回车继续采集')
+            else:
+                showInfo('最终数据' + str(total_num) + '条数据')
+                print(finalArr)
+                print(len(finalArr))
+                transToExcel(finalArr)
+                break
