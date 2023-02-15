@@ -8,7 +8,7 @@ from util import chooseUrl
 # 获取信息表所有的公司名称和新抓取的数据进行对比
 def getCoureCode():
     wb = load_workbook(chooseUrl(3))
-    ws = wb['2022信息']
+    ws = wb['2023信息']
     list = []
     for num, j in enumerate(ws.rows):
         if num > 0:
@@ -59,30 +59,26 @@ def getCodeAndNames():
 def getFreshData():
     url = chooseUrl(1)
     wb = load_workbook(url)
-    ws = wb['Sheet1']
+    ws = wb['Sheet']
     arr = getCoureCode()
     news = wb.create_sheet()
     news.append(['公司名称', '案号', '法院', '日期'])
     for num, j in enumerate(ws.rows):
         if num > 0:
-            list = []
+            new_list = []
             for index, n in enumerate(j):
                 # 判断顺序 是0则为公司字符串 否则为案号等其他信息
                 if 0 == index:
                     if n.value in arr:
-                        print(n.value + '---原表里已经有了')
+                        print('第' + str(num) + '行原表里已经有了...........' + n.value)
                         break
                     else:
-                        if len(n.value) > 6:
-                            print('第' + str(num) + '行---' + n.value + '---添到新的数据')
-                            list.append(n.value)
-                        else:
-                            break
+                        print('第' + str(num) + '行添到新的数据了...........' + n.value)
+                        new_list.append(n.value)
                 else:
-                    list.append(n.value)
-            if len(list) != 0:
-                if list[0].find(';') == -1 & list[0].find('医院') == -1:
-                    news.append(list)
+                    new_list.append(n.value)
+            if len(new_list) != 0:
+                news.append(new_list)
     wb.save(url)
     print('成功筛选')
 

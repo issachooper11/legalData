@@ -1,4 +1,4 @@
-from method import getPlaintiff
+from method import getPlaintiff, getCoureCode
 from util import filterCourtName
 
 info = [
@@ -425,5 +425,8 @@ def changeData(l):
 new_list_text = getPlaintiff(changeData(info))
 # for i in new_list_text:
 #     print(i)
-print(changeData(info))
-print(new_list_text)
+# print(changeData(info))
+# print(new_list_text)
+
+arr = getCoureCode()
+print(arr)
