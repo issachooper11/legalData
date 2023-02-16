@@ -128,19 +128,6 @@ def filterHtmlData(l):
         showInfo('转换完成')
 
 
-# 直接将数据转化为excel输出到桌面
-def transToExcel(l):
-    if len(l) > 0:
-        save_url = chooseUrl(1)
-        wb = load_workbook(save_url)
-        news = wb.create_sheet()
-        news.append(['公司名称', '案号', '法院', '日期'])
-        for i in l:
-            news.append(i)
-        wb.save(save_url)
-        showInfo('转换完成')
-
-
 def changeData(l):
     filter_list = []
     if len(l) > 0:

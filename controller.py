@@ -3,9 +3,8 @@
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from base import BaseControl
-from method import getUnEditCodes, getPlaintiff
-from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData, \
-    transToExcel
+from method import getUnEditCodes, getPlaintiff, transToExcel
+from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData
 
 
 class EdgeControl(BaseControl):
@@ -179,7 +178,6 @@ class EdgeControl(BaseControl):
                 list_text = []
                 for li in self.controlByXpath(docs['列表']).find_elements(By.TAG_NAME, 'li'):
                     list_text.append(li.text)
-                showInfo('未处理的数据展示如下')
                 new_list_text = getPlaintiff(changeData(list_text))
                 # print(changeData(list_text))
                 # new_filter_list_text = changeData(list_text)

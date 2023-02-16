@@ -2,7 +2,7 @@
 # 开发时间: 2022/3/24 12:11
 from openpyxl import load_workbook
 
-from util import chooseUrl
+from util import chooseUrl, showInfo
 
 
 # 获取信息表所有的公司名称和新抓取的数据进行对比
@@ -110,7 +110,7 @@ def getNewWkData():
                     else:
                         pass
                     if len(name) > 5:
-                        if checkValue(name):
+                        if checkInfoValue(name):
                             list.append(name)
                     else:
                         break
@@ -155,15 +155,26 @@ def checkValue(data):
         return False
     elif '纠纷' in data:
         return False
+    elif '×' in data:
+        return False
     else:
         return True
+
+
+def checkInfoValue(data):
+    info_list = ['银行', '委员会', '解放军', '律师', '学校', '医院', '政府', '学院', '大学', '中学', '小学', '合作社',
+                 '纠纷', '×', '合作联社', '卫生院', '管理段']
+    for field in info_list:
+        if field in data:
+            return False
+    return True
 
 
 # 处理数组内容中含'等 、 二审等字样的内容只截取到原告信息进行判断
 # 去重复项目 去空项目 去个人项目
 def getPlaintiff(arr):
     new_arr = arr
-    separators = ['与', '等', '二审', '、', ';', '*', '·']
+    separators = ['与', '等', '二审', '、', ';', '*', '·', ',']
     for i in arr:
         for sep in separators:
             i[0] = i[0].split(sep)[0]
@@ -171,8 +182,23 @@ def getPlaintiff(arr):
     for array in new_arr:
         key = array[0]
         if key != '':
-            if len(key) > 4:
-                if checkValue(key):
+            if len(key) > 5:
+                if checkInfoValue(key):
                     if key not in unique_dict:
                         unique_dict[key] = array
     return list(unique_dict.values())
+
+
+# 直接将数据转化为excel输出到桌面
+def transToExcel(l):
+    # 对最终数据再处理一遍
+    final_arr = getPlaintiff(l)
+    if len(final_arr) > 0:
+        save_url = chooseUrl(1)
+        wb = load_workbook(save_url)
+        news = wb.create_sheet()
+        news.append(['公司名称', '案号', '法院', '日期'])
+        for i in final_arr:
+            news.append(i)
+        wb.save(save_url)
+        showInfo('转换完成')
