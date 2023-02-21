@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 
 from util import chooseUrl, showInfo
 
-
+import pandas as pd
 # 获取信息表所有的公司名称和新抓取的数据进行对比
 def getCoureCode():
     wb = load_workbook(chooseUrl(3))
@@ -16,6 +16,16 @@ def getCoureCode():
                 if 2 == index:
                     list.append(n.value)
     return list
+
+
+def getCompanyNameAndCode():
+    df = pd.read_excel(chooseUrl(3), '2023信息')
+    result = []
+    for index, row in df.iterrows():
+        col2 = row[1]
+        col3 = row[2]
+        result.append([col2, col3])
+    return result
 
 
 # 获取没有验证的所有案号
@@ -81,6 +91,11 @@ def getFreshData():
                 news.append(new_list)
     wb.save(url)
     print('成功筛选')
+
+
+def openDataPage():
+    arr = getCompanyNameAndCode()
+    print(arr)
 
 
 # 对抓取完的初始数据进行筛查和处理 找出公司客户

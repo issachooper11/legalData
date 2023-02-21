@@ -11,6 +11,18 @@ class EdgeControl(BaseControl):
     def __init__(self, driver):
         super().__init__(driver)
 
+    def login_cpws(self):
+        showInfo('打开裁判文书网')
+        self.setWinPosition(0, 0)
+        self.setWinSize(1024, 1024)
+        self.driver.get('https://wenshu.court.gov.cn/')
+        manual_confirm('...........是否开始登陆...........：')
+        self.controlByXpath('//*[@id="loginLi"]/a').click()
+        manual_confirm('...........是否继续测试...........：')
+        print('13644120346, Caiyuan2020!')
+        self.driver.find_element(By.CLASS_NAME, 'searchKey search-inp').send_keys('二审')
+
+
     def login_test(self):
         showInfo('开始登录')
         self.setWinPosition(0, 0)
