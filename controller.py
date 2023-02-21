@@ -3,7 +3,7 @@
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from base import BaseControl
-from method import getUnEditCodes, getPlaintiff, transToExcel
+from method import getUnEditCodes, getPlaintiff, transToExcel, getCompanyNameAndCode
 from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData
 
 
@@ -19,8 +19,25 @@ class EdgeControl(BaseControl):
         manual_confirm('...........是否开始登陆...........：')
         self.controlByXpath('//*[@id="loginLi"]/a').click()
         manual_confirm('...........是否继续测试...........：')
-        print('13644120346, Caiyuan2020!')
-        self.driver.find_element(By.CLASS_NAME, 'searchKey search-inp').send_keys('二审')
+        self.refreshPage()
+        delay(3)
+        iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
+        self.driver.switch_to.frame(iframe)
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
+        arr = getCompanyNameAndCode()
+        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[2]/input').send_keys(arr[0][0])
+        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[3]').click()
+        delay(5)
+        self.controlByXpath('//*[@id="_view_1545184311000"]/div[3]/div[2]/h4/a').click()
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        manual_confirm('...........是否关闭...........：')
+        self.closePage()
+        self.driver.switch_to.window(self.driver.window_handles[0])
+        delay(5)
+
+
 
 
     def login_test(self):
