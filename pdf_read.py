@@ -37,19 +37,32 @@ for sent in sentences:
 
 # 提取判决结果
 judgement = ''
-for i, sent in enumerate(sentences):
-    if re.search(r'判决', sent):
-        if re.search(r'如下', sent):
-            # 如果判决结果在本句中，则提取本句中的内容
-            judgement = sent.split('如下')[1]
-        else:
-            # 否则，在下一句中查找判决结果
-            next_sent = sentences[i + 1]
-            judgement = next_sent.strip()
-        break
+# for i, sent in enumerate(sentences):
+#     if re.search(r'判决', sent):
+#         if re.search(r'如下', sent):
+#             # 如果判决结果在本句中，则提取本句中的内容
+#             judgement = sent.split('如下')[1]
+#         else:
+#             # 否则，在下一句中查找判决结果
+#             next_sent = sentences[i + 1]
+#             judgement = next_sent.strip()
+#         break
+# 提取上诉人的诉求
+appeal_pattern = r'上诉人(.*?)，.*?(要求|请求|诉称|诉请)(.*?)。'
+appeal_match = re.search(appeal_pattern, text, re.DOTALL)
+if appeal_match:
+    appeal = appeal_match.group(3)
+else:
+    appeal = ''
 
-# 打印结果
-print('原告的上诉请求：', appeal_request)
-print('判决结果：', judgement)
+# 提取判决结果
+judgment_pattern = r'(判决如下|裁定如下|决定如下).*?：(.*?)\n'
+judgment_match = re.search(judgment_pattern, text, re.DOTALL)
+if judgment_match:
+    judgment = judgment_match.group(2)
+else:
+    judgment = ''
 
-# print(text)
+# 输出结果
+print('上诉人的诉求：', appeal)
+print('判决结果：', judgment)
