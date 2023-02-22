@@ -1,7 +1,7 @@
 # 开发者:小白菜
 # 开发时间: 2022/3/24 12:11
 # 威科更新 需要在输入框输入二审，再按照流程获取数据
-from method import getFreshData, openDataPage
+from method import getFreshData, openDataPage, getCompanyNameAndCode
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from controller import EdgeControl
@@ -35,3 +35,4 @@ if __name__ == '__main__':
             lg.open_and_checkData()
         else:
             pass
+

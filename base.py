@@ -57,3 +57,7 @@ class BaseControl(object):
     # 设置窗口位置
     def setWinPosition(self, x, y):
         return self.driver.set_window_position(x, y)
+
+    # 设置窗口全屏
+    def setMaxScreen(self):
+        return self.driver.maximize_window()

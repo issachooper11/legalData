@@ -14,7 +14,7 @@ class EdgeControl(BaseControl):
     def login_cpws(self):
         showInfo('打开裁判文书网')
         self.setWinPosition(0, 0)
-        self.setWinSize(1024, 1024)
+        self.setMaxScreen()
         self.driver.get('https://wenshu.court.gov.cn/')
         manual_confirm('...........是否开始登陆...........：')
         self.controlByXpath('//*[@id="loginLi"]/a').click()
@@ -23,22 +23,42 @@ class EdgeControl(BaseControl):
         delay(3)
         iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
         self.driver.switch_to.frame(iframe)
-        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('15810733362')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
         arr = getCompanyNameAndCode()
-        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[2]/input').send_keys(arr[0][0])
-        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[3]').click()
-        delay(5)
-        self.controlByXpath('//*[@id="_view_1545184311000"]/div[3]/div[2]/h4/a').click()
-        self.driver.switch_to.window(self.driver.window_handles[-1])
-        manual_confirm('...........是否关闭...........：')
-        self.closePage()
-        self.driver.switch_to.window(self.driver.window_handles[0])
-        delay(5)
-
-
-
+        a = input('...........从第几个项目开始查询：...........：')
+        check_data = True
+        if a != '0':
+            for i, item in enumerate(arr[int(a) - 2:]):
+                check_name = input('这个数据是你需要的嘛：(确定输入1，回车跳过)' + item[1])
+                if check_name == '1':
+                    if check_data:
+                        print('...........1...........')
+                        manual_confirm('页面是否加载')
+                        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[2]/input').send_keys(
+                            item[0])
+                        self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[3]').click()
+                        delay(3)
+                        manual_confirm('页面是否加载')
+                        check_data = False
+                    else:
+                        print('...........2...........')
+                        manual_confirm('页面是否加载')
+                        self.controlByXpath('//*[@id="clear-Btn"]').click()
+                        delay(3)
+                        manual_confirm('页面是否加载')
+                        self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[2]/input').send_keys(item[0])
+                        self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[3]').click()
+                        delay(2)
+                    self.controlByXpath('//*[@id="_view_1545184311000"]/div[3]/div[2]/h4/a').click()
+                    self.driver.switch_to.window(self.driver.window_handles[-1])
+                    manual_confirm('...........是否关闭...........：')
+                    self.driver.close()
+                    self.driver.switch_to.window(self.driver.window_handles[0])
+                else:
+                    print('...........跳过：...........')
+                    pass
 
     def login_test(self):
         showInfo('开始登录')
