@@ -15,13 +15,20 @@ if __name__ == '__main__':
     print('4------根据12.xlsx与信息报对照获取新数据并保存')
     task_code = input('亲, 请选择任务啦-----------:')
     if task_code == '4':
-        # getFreshData()
         # 实例化edge开始按照步骤登录
         ser = Service(chooseUrl(2))
         op = webdriver.EdgeOptions()
         dr = webdriver.Edge(service=ser, options=op)
         lg = EdgeControl(dr)
-        lg.login_cpws()
+        # lg.login_cpws()
+        lg.login_cpwsw()
+        a = input('是否开始筛选新数据:')
+        if a == '':
+            print('no')
+        else:
+            print('yes')
+            getFreshData()
+
     else:
         # 实例化edge开始按照步骤登录
         ser = Service(chooseUrl(2))

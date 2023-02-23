@@ -128,6 +128,7 @@ def filterHtmlData(l):
         showInfo('转换完成')
 
 
+# 处理微科抓取的数据 整理成判决书内容-案号-法院-日期的数组形式
 def changeData(l):
     filter_list = []
     if len(l) > 0:
@@ -144,6 +145,16 @@ def changeData(l):
                         lists.append(x)
                     filter_list.append(lists)
         return filter_list
+
+
+# 处理裁判文书网抓取的数据
+def change_cpwsw_data(info):
+    arr = []
+    for i in info:
+        lines = i.split('\n')
+        data = [lines[1], lines[2].split()[1], lines[2].split()[0], lines[2].split()[2]]
+        arr.extend([data])
+    return arr
 
 
 # 手动点击通用方法

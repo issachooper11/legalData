@@ -4,60 +4,127 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from base import BaseControl
 from method import getUnEditCodes, getPlaintiff, transToExcel, getCompanyNameAndCode
-from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData
+from util import showInfo, docs, delay, provinces, filterHtmlData, wk_url, handleByInfo, manual_confirm, changeData, \
+    change_cpwsw_data
 
 
 class EdgeControl(BaseControl):
     def __init__(self, driver):
         super().__init__(driver)
 
+    def login_cpwsw(self):
+        showInfo('打开裁判文书网')
+        self.setWinPosition(0, 0)
+        self.setMaxScreen()
+        self.driver.get('https://wenshu.court.gov.cn/')
+        manual_confirm('是否开始登陆：')
+        self.controlByXpath('//*[@id="loginLi"]/a').click()
+        manual_confirm('是否继续测试：')
+        self.refreshPage()
+        delay(3)
+        iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
+        self.driver.switch_to.frame(iframe)
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
+        manual_confirm('页面是否完全加载：')
+        # 点击民事案件 切换到新页面
+        self.controlByXpath('//*[@id="_view_1540966819000"]/div/ul/li[3]/a').click()
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        manual_confirm('按回车开始自动输入条件后，手动点击剩余条件：')
+        self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[2]/input').send_keys('二审')
+        self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[3]').click()
+        # 点击裁判日期
+        delay(3)
+        showInfo('点击裁判日期')
+        self.controlByXpath('//*[@id="_view_1545184311000"]/div[2]/div[2]/a').click()
+        # 点击裁判年份
+        delay(3)
+        showInfo('点击裁判年份')
+        self.controlByXpath('//*[@id="_view_1545096058000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[0].click()
+        # 点击文书类型
+        delay(3)
+        showInfo('点击文书类型')
+        self.controlByXpath('//*[@id="_view_1545095166000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[0].click()
+        showInfo('手动点击每页显示条数-点击案由')
+        manual_confirm('手动回车继续进行程序：')
+        # 定义数据数组和统计数
+        finalArr = []
+        total_num = 0
+        while True:
+            data_input = input('是否继续抓取页面信息:')
+            if data_input == '':
+                elements = self.controlByXpath('//*[@id="_view_1545184311000"]').find_elements(By.CLASS_NAME, 'LM_list')
+                list_text = [element.text for element in elements]
+                new_list_text = getPlaintiff(change_cpwsw_data(list_text))
+                showInfo('本页收集' + str(len(new_list_text)) + '条有效数据')
+                finalArr.extend(new_list_text)
+                total_num = total_num + len(new_list_text)
+                self.controlByText('下一页').click()
+                showInfo('等待页面加载完')
+                delay(3)
+            elif data_input == '2023':
+                manual_confirm('手动切换地区，按回车继续采集：')
+            elif data_input == 'end':
+                showInfo('结束采集')
+                self.closePage()
+                break
+            else:
+                showInfo('最终数据' + str(total_num) + '条数据')
+                showInfo('结束采集')
+                print(finalArr)
+                print(len(finalArr))
+                transToExcel(finalArr)
+                self.closePage()
+                break
+
     def login_cpws(self):
         showInfo('打开裁判文书网')
         self.setWinPosition(0, 0)
         self.setMaxScreen()
         self.driver.get('https://wenshu.court.gov.cn/')
-        manual_confirm('...........是否开始登陆...........：')
+        manual_confirm('是否开始登陆：')
         self.controlByXpath('//*[@id="loginLi"]/a').click()
-        manual_confirm('...........是否继续测试...........：')
+        manual_confirm('是否继续测试：')
         self.refreshPage()
         delay(3)
         iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
         self.driver.switch_to.frame(iframe)
-        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('15810733362')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
         arr = getCompanyNameAndCode()
-        a = input('...........从第几个项目开始查询：...........：')
+        a = input('从第几个项目开始查询：：')
         check_data = True
         if a != '0':
             for i, item in enumerate(arr[int(a) - 2:]):
                 check_name = input('这个数据是你需要的嘛：(确定输入1，回车跳过)' + item[1])
                 if check_name == '1':
                     if check_data:
-                        print('...........1...........')
-                        manual_confirm('页面是否加载')
+                        print('1')
+                        manual_confirm('页面是否加载：')
                         self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[2]/input').send_keys(
                             item[0])
                         self.controlByXpath('//*[@id="_view_1540966814000"]/div/div[1]/div[3]').click()
                         delay(3)
-                        manual_confirm('页面是否加载')
+                        manual_confirm('页面是否加载：')
                         check_data = False
                     else:
-                        print('...........2...........')
-                        manual_confirm('页面是否加载')
+                        print('2')
+                        manual_confirm('页面是否加载：')
                         self.controlByXpath('//*[@id="clear-Btn"]').click()
                         delay(3)
-                        manual_confirm('页面是否加载')
+                        manual_confirm('页面是否加载：')
                         self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[2]/input').send_keys(item[0])
                         self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[3]').click()
                         delay(2)
                     self.controlByXpath('//*[@id="_view_1545184311000"]/div[3]/div[2]/h4/a').click()
                     self.driver.switch_to.window(self.driver.window_handles[-1])
-                    manual_confirm('...........是否关闭...........：')
+                    manual_confirm('是否关闭：')
                     self.driver.close()
                     self.driver.switch_to.window(self.driver.window_handles[0])
                 else:
-                    print('...........跳过：...........')
+                    print('跳过：')
                     pass
 
     def login_test(self):
@@ -220,7 +287,7 @@ class EdgeControl(BaseControl):
         self.waitLoading(docs['搜索']).click()
         finalArr = []
         total_num = 0
-        manual_confirm('手动点击条件，完成后按回车继续工作')
+        manual_confirm('手动点击条件，完成后按回车继续工作：')
         while True:
             data_input = input('程序是否继续运行:')
             if data_input == '':
@@ -259,7 +326,7 @@ class EdgeControl(BaseControl):
                 showInfo('等待页面加载完')
                 delay(10)
             elif data_input == '2023':
-                manual_confirm('手动切换地区，按回车继续采集')
+                manual_confirm('手动切换地区，按回车继续采集：')
             else:
                 showInfo('最终数据' + str(total_num) + '条数据')
                 print(finalArr)

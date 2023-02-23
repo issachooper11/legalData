@@ -5,6 +5,8 @@ from openpyxl import load_workbook
 from util import chooseUrl, showInfo
 
 import pandas as pd
+
+
 # 获取信息表所有的公司名称和新抓取的数据进行对比
 def getCoureCode():
     wb = load_workbook(chooseUrl(3))
