@@ -1,33 +1,31 @@
-# 开发者:小白菜
-# 开发时间: 2022/3/24 12:11
-# 威科更新 需要在输入框输入二审，再按照流程获取数据
-from method import getFreshData, openDataPage, getCompanyNameAndCode
+from method import getFreshData, chooseUrl
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from controller import EdgeControl
-from util import chooseUrl
-
 if __name__ == '__main__':
     print('请选择任务啦')
     print('1------抓取威科全部的新数据')
     print('2------打开信息表查看数据是否符合要求')
     print('3------测试项目')
     print('4------根据12.xlsx与信息报对照获取新数据并保存')
-    task_code = input('亲, 请选择任务啦-----------:')
+    task_code = input('请选择任务啦-----------:')
     if task_code == '4':
         # 实例化edge开始按照步骤登录
         ser = Service(chooseUrl(2))
         op = webdriver.EdgeOptions()
         dr = webdriver.Edge(service=ser, options=op)
         lg = EdgeControl(dr)
-        # lg.login_cpws()
-        lg.login_cpwsw()
+        check_cpwsw = input('抓取裁判文书网数据(回车) or 打开信息表查看判决信息：')
+        if check_cpwsw == '':
+            lg.login_cpwsw()
+        else:
+            lg.login_cpws()
         a = input('是否开始筛选新数据:')
         if a == '':
-            print('no')
-        else:
             print('yes')
             getFreshData()
+        else:
+            print('no')
 
     else:
         # 实例化edge开始按照步骤登录

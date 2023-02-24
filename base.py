@@ -1,5 +1,3 @@
-# 开发者:小白菜
-# 开发时间: 2022/3/24 12:11
 from selenium.common.exceptions import ElementNotVisibleException, ElementNotSelectableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
