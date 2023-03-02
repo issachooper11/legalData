@@ -5,6 +5,7 @@ import os
 
 def check_phone_and_call(info_number):
     c = u2.connect_usb('e697a1a5')
+    # c = u2.connect('192.168.0.100:5555')
     c.app_start('com.tencent.mm')
     delay(3)
     x = input('微信是否已经打开输入框(回车是已经打开了)：')
@@ -15,7 +16,7 @@ def check_phone_and_call(info_number):
         c.click(0.384, 0.127)  # 点击空白行
     else:
         pass
-    c.send_keys(info_number, clear=True)  # 输入电话号
+    c(focused=True).set_text(info_number)  # 输入电话号
     delay(3)
     c.click(0.411, 0.138)  # 点击搜索
     delay(5)
@@ -31,6 +32,6 @@ def check_phone_and_call(info_number):
     else:
         print('结束')
 
-
-phone = '13644120346'
+data = ''
+phone = '13911320252'
 check_phone_and_call(phone)
