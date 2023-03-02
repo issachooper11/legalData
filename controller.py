@@ -98,7 +98,7 @@ class EdgeControl(BaseControl):
         check_data = True
         if a != '0':
             for i, item in enumerate(arr[int(a) - 2:]):
-                check_name = input('这个数据是你需要的嘛：(确定输入1，回车跳过)--' + item[1])
+                check_name = input('这个数据是你需要的嘛：(确定输入1，回车跳过)--' + item[1] + '--：')
                 if check_name == '1':
                     if check_data:
                         print('1')
