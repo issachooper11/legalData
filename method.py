@@ -5,6 +5,7 @@ import pandas as pd
 
 from util import excel_url, driver_url, originalUrl, excel_url1, driver_url1, originalUrl1
 import time
+import re
 
 
 # 获取信息表所有的公司名称和新抓取的数据进行对比
@@ -28,6 +29,27 @@ def getCompanyNameAndCode():
         col3 = row[2]
         result.append([col2, col3])
     return result
+
+
+# 根据标记号获取当日呼叫数据并过滤座机号
+def getDailyPhoneCallInfo(day_num):
+    df = pd.read_excel(chooseUrl(3), '2023信息')
+    result = []
+    for index, row in df.iterrows():
+        if row[0] == float(day_num):
+            col2 = row[1]
+            col3 = row[2]
+            col4 = get_corrcet_phone_number(row[3])
+            result.append([col2, col3, col4])
+    return result
+
+
+# 处理上述方法中待呼叫公司电话的数据
+def get_corrcet_phone_number(col):
+    if isinstance(col, str):
+        return re.compile(r'1\d{10}').findall(col)
+    else:
+        return re.compile(r'1\d{10}').findall(str(col))
 
 
 # 获取没有验证的所有案号
