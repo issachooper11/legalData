@@ -90,7 +90,7 @@ class EdgeControl(BaseControl):
         delay(3)
         iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
         self.driver.switch_to.frame(iframe)
-        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('15810733362')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
         arr = getCompanyNameAndCode()
