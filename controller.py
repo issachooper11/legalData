@@ -1,5 +1,7 @@
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
+
 from base import BaseControl
 from method import getUnEditCodes, getPlaintiff, transToExcel, getCompanyNameAndCode, showInfo, manual_confirm, delay, \
     change_cpwsw_data, filterHtmlData, changeData
@@ -16,23 +18,29 @@ class EdgeControl(BaseControl):
         self.setWinPosition(0, 0)
         self.setMaxScreen()
         self.driver.get('https://wenshu.court.gov.cn/')
-        manual_confirm('是否开始登陆：')
+        showInfo('进入页面并刷新')
+        self.refreshPage()
+        delay(3)
+        showInfo('点击登陆按钮并刷新')
         self.controlByXpath('//*[@id="loginLi"]/a').click()
-        manual_confirm('是否继续登陆：')
         self.refreshPage()
         delay(3)
         iframe = self.driver.find_elements(By.TAG_NAME, 'iframe')[0]
         self.driver.switch_to.frame(iframe)
-        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('13644120346')
+        self.controlByXpath('//*[@id="root"]/div/form/div/div[1]/div/div/div/input').send_keys('15810733362')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[2]/div/div/div/input').send_keys('Caiyuan2020!')
         self.controlByXpath('//*[@id="root"]/div/form/div/div[3]/span').click()
-        manual_confirm('页面是否完全加载：')
+        delay(3)
+        self.refreshPage()
         # 点击民事案件 切换到新页面
         self.controlByXpath('//*[@id="_view_1540966819000"]/div/ul/li[3]/a').click()
         self.driver.switch_to.window(self.driver.window_handles[-1])
         manual_confirm('按回车开始自动输入条件后，手动点击剩余条件：')
         self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[2]/input').send_keys('二审')
         self.controlByXpath('//*[@id="_view_1545034775000"]/div/div[1]/div[3]').click()
+        # 点击显示15条数据
+        delay(3)
+        Select(self.driver.find_element(By.CLASS_NAME, 'pageSizeSelect')).select_by_visible_text('15')
         # 点击裁判日期
         delay(3)
         showInfo('点击裁判日期')
@@ -40,12 +48,15 @@ class EdgeControl(BaseControl):
         # 点击裁判年份
         delay(3)
         showInfo('点击裁判年份')
-        self.controlByXpath('//*[@id="_view_1545096058000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[0].click()
+        self.controlByXpath('//*[@id="_view_1545096058000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[
+            0].find_element(By.TAG_NAME, 'a').click()
         # 点击文书类型
         delay(3)
         showInfo('点击文书类型')
-        self.controlByXpath('//*[@id="_view_1545095166000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[0].click()
-        showInfo('手动点击每页显示条数-点击案由')
+        self.controlByXpath('//*[@id="_view_1545095166000"]/div/div[2]/ul').find_elements(By.TAG_NAME, 'li')[
+            0].find_element(By.TAG_NAME, 'a').click()
+        delay(3)
+        showInfo('手动点击案由')
         manual_confirm('手动回车继续进行程序：')
         # 定义数据数组和统计数
         finalArr = []
